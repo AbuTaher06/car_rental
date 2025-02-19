@@ -14,7 +14,6 @@
             </div>
             <div class="ms-3">
                 <h6 class="mb-0">{{ Auth::user()->name }}</h6>
-
             </div>
         </div>
 
@@ -43,6 +42,17 @@
                 <div class="dropdown-menu bg-transparent border-0">
                     <a href="{{ route('admin.rentals.index') }}" class="dropdown-item">Rental List</a>
                     <a href="{{ route('admin.rentals.create') }}" class="dropdown-item">Add Rental</a>
+                </div>
+            </div>
+
+            <!-- Customers Section -->
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle {{ request()->is('admin/customers*') ? 'active' : '' }}" data-bs-toggle="dropdown">
+                    <i class="fa fa-users me-2"></i>Customers
+                </a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="{{ route('admin.customers.index') }}" class="dropdown-item">Customer List</a>
+                    <a href="{{ route('admin.customers.create') }}" class="dropdown-item">Add Customer</a>
                 </div>
             </div>
 

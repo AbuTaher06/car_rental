@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CarController;
 use App\Http\Controllers\Admin\RentalController;
+use App\Http\Controllers\Admin\CustomerController;
 // Redirect root to login page
 Route::get('/', function () {
     return redirect()->route('login');
@@ -40,5 +41,15 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], f
      Route::get('/rentals/{rental}/edit', [RentalController::class, 'edit'])->name('rentals.edit'); // Edit rental
      Route::put('/rentals/{rental}', [RentalController::class, 'update'])->name('rentals.update'); // Update rental
      Route::delete('/rentals/{rental}', [RentalController::class, 'destroy'])->name('rentals.destroy'); // Delete rental
+
+    Route::get('customers', [CustomerController::class, 'index'])->name('customers.index'); // List Customers
+    Route::get('customers/create', [CustomerController::class, 'create'])->name('customers.create'); // Add Customer Form
+    Route::post('customers', [CustomerController::class, 'store'])->name('customers.store'); // Store Customer
+    Route::get('customers/{customer}/edit', [CustomerController::class, 'edit'])->name('customers.edit'); // Edit Customer Form
+    Route::put('customers/{customer}', [CustomerController::class, 'update'])->name('customers.update'); // Update Customer
+    Route::delete('customers/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy'); // Delete Customer
+    Route::get('customers/{customer}/rental-history', [CustomerController::class, 'rentalHistory'])->name('customers.rental_history'); // Rental History
+
+
 });
 

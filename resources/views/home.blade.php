@@ -20,8 +20,15 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="#car-listings">Browse Cars</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                    @if (Auth::check())
+                    <li class="nav-item"><a class="btn btn-outline-light ms-2" href="{{ route('dashboard') }}">Dashbaord</a></li>
+
+
+
+                    @else
                     <li class="nav-item"><a class="btn btn-outline-light ms-2" href="{{ route('login') }}">Login</a></li>
                     <li class="nav-item"><a class="btn btn-outline-light ms-2" href="{{ route('register') }}">Register</a></li>
+                    @endif
                 </ul>
             </div>
         </div>
@@ -96,15 +103,40 @@
                     <td>{{ $car->availability_status }}</td>
                     <td><img src="{{ $car->image }}" alt="{{ $car->name }}" style="width: 100px; height: auto;"></td>
                     <td>
-                        <form action="{{ route('book', ['carId' => $car->id]) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-primary btn-sm">Book Now</button>
-                        </form>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#bookingModal"
+                                onclick="setCarId({{ $car->id }}, '{{ $car->name }}')">Book Now</button>
                     </td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
+    </div>
+
+    <!-- Booking Modal -->
+    <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bookingModalLabel">Book a Car</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="bookingForm" method="POST" action="">
+                        @csrf
+                        <input type="hidden" name="car_id" id="car_id">
+                        <div class="mb-3">
+                            <label for="start_date" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="end_date" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Booking</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Footer -->
@@ -138,10 +170,8 @@
                                     <td>${car.availability_status}</td>
                                     <td><img src="${car.image}" alt="${car.name}" style="width: 100px; height: auto;"></td>
                                     <td>
-                                        <form action="/book/${car.id}" method="POST">
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                            <button type="submit" class="btn btn-primary btn-sm">Book Now</button>
-                                        </form>
+                                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#bookingModal"
+                                                onclick="setCarId(${car.id}, '${car.name}')">Book Now</button>
                                     </td>
                                 </tr>`
                             );
@@ -153,6 +183,12 @@
                 });
             });
         });
+
+        function setCarId(carId, carName) {
+            document.getElementById('car_id').value = carId;
+            document.getElementById('bookingModalLabel').innerText = `Book ${carName}`;
+            document.getElementById('bookingForm').action = `/book/${carId}`;
+        }
     </script>
 </body>
 </html>

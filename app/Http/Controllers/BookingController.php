@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Rental;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -12,7 +13,14 @@ class BookingController extends Controller
 {
     public function book(Request $request, $carId)
     {
+        //dd($request->all());
         $car = Car::findOrFail($carId);
+
+        // Validate the request data
+        $request->validate([
+            'start_date' => 'required|date|after_or_equal:today',
+            'end_date' => 'required|date|after:start_date',
+        ]);
 
         // Check if the user is authenticated
         if (Auth::check()) {
@@ -20,9 +28,9 @@ class BookingController extends Controller
             Rental::create([
                 'customer_id' => Auth::id(),
                 'car_id' => $car->id,
-                'start_date' => now(),
-                'end_date' => now()->addDays(1),
-                'total_cost' => $car->daily_rent_price, // Use daily rent price
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+                'total_cost' => $car->daily_rent_price * (Carbon::parse($request->end_date)->diffInDays($request->start_date) + 1), // Calculate total cost
                 'status' => 'Pending',
             ]);
 
@@ -33,4 +41,5 @@ class BookingController extends Controller
         // Redirect to login with an error message if not authenticated
         return redirect()->route('login')->with('error', 'Please log in to confirm your booking.');
     }
+
 }
